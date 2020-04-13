@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Snake Game </title>
+        <link href="style.css" type="stylesheet">
+    </head>
+    <body>
+
+        <center>
+            <canvas id="stage" width="1000" height="600"></canvas>
+        </center>
+        
+        <script type="text/javascript">
+
+            window.onload = function(){
+
+                let stage = document.getElementById('stage');
+                let ctx = stage.getContext("2d");
+                let cont = 0;
+                document.addEventListener("keydown", keyPush);
+
+                // a cada 60 ms chamamos a função game
+                setInterval(game, 80);
+
+                const vel = 1;
+
+                let vx = vy = 0;
+                let px = py = 10;
+                let tp = 20; //tamanho da peça
+                let qpx = 50; //quantidade de peças na horizontal
+                let qpy = 30; //quantidade de peças na horizontal
+                let ax=ay = 15;
+
+                var trail = []; //rastro da cobra
+                tail = 5;
+
+                function game(){
+                    px += vx;
+                    py += vy;
+
+                    // Controle das bordas do tabuleiro
+                    if(px < 0){
+                        px = qpx - 1;
+                    }
+
+                    if(px > qpx - 1){
+                        px = 0;
+                    }
+
+                    if(py < 0){
+                        py = qpy - 1;
+                    }
+
+                    if(py > qpy - 1){
+                        py = 0;
+                    }
+
+                    // Preenchimento da tela
+                    ctx.fillStyle = "#87cefa";
+                    ctx.fillRect(0,0, stage.width, stage.height);
+                   
+                    ctx.fillStyle = "#f08080";
+                    ctx.fillRect(ax*tp,ay*tp, tp, tp);
+
+                    ctx.fillStyle = "#8FBC8F";
+                    for(let i = 0; i < trail.length; i++){
+                        ctx.fillRect(trail[i].x*tp, trail[i].y*tp, tp - 1, tp - 1);
+
+                        //Se algum elemento do rastro está junto com a cabeça, game-over
+                        if(trail[i].x == px && trail[i].y == py && cont != 0) {
+                            vx = vy = 0;
+                            tail = 5;
+                            alert('Game over! Reiniciar?');
+                            cont = 0;
+                        }
+                    }
+
+                    trail.push({ x: px, y:py});
+                    while(trail.length > tail) {
+                        trail.shift();
+                    } 
+
+                    if(ax == px && ay == py){
+                        if(cont == 0) cont = 1;
+                        tail++;
+                        ax = Math.floor(Math.random()*qpx);
+                        ay = Math.floor(Math.random()*qpy);
+                    } 
+                }  
+
+                function keyPush(event){
+                    //Movimentação de acordo com a tecla pressionada
+                    console.log(event.keyCode);
+                    switch(event.keyCode){
+                        case 37: //left
+                            vx = -vel;
+                            vy = 0;
+                            break;
+
+                        case 38: //up
+                            vx = 0;
+                            vy = -vel;
+                            break;
+
+                        case 39: //right
+                            vx = vel;
+                            vy = 0;
+                            break;
+
+                        case 40: //down
+                            vx = 0;
+                            vy = vel;
+                            break;
+
+                        default: 
+                    }
+
+                }
+
+            }
+        </script>
+
+    </body>
+</html>
